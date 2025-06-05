@@ -53,6 +53,10 @@ kubectl port-forward -n openfaas svc/prometheus 9090:9090 &
 
 ## Requêtes Prometheus utiles
 
+### Durée d'exécution moyenne
+
+(rate(gateway_functions_seconds_sum[20s]) / rate(gateway_functions_seconds_count[20s]))
+
 ### Nombre total d'invocations par fonction
 
 sum(gateway_function_invocation_total) by (function_name)
@@ -64,6 +68,10 @@ rate(gateway_function_invocation_total[1m])
 ### Invocations des dernières 5 minutes
 
 increase(gateway_function_invocation_total[5m])
+
+### Fonctions les plus utilisés
+
+topk(5, sum(rate(gateway_function_invocation_total[5m])) by (function_name))
 
 # Screenshots:
 
