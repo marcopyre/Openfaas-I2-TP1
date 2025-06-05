@@ -24,11 +24,11 @@ jobs:
     steps:
       - name: Install pip packages
         run: pip install -r requirements.txt
-        working-directory: ./save-feedback
+        working-directory: save-feedback
 
       - name: Test code
         run: pytest
-        working-directory: ./save-feedback
+        working-directory: save-feedback
 
   deploy:
     if: ${{ false }}

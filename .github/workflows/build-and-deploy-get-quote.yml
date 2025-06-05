@@ -24,11 +24,11 @@ jobs:
     steps:
       - name: Install pip packages
         run: pip install -r requirements.txt
-        working-directory: ./get-quote
+        working-directory: get-quote
 
       - name: Test code
         run: pytest
-        working-directory: ./get-quote
+        working-directory: get-quote
 
   deploy:
     if: ${{ false }}
