@@ -1,4 +1,4 @@
-name: Deploy OpenFaaS Function
+name: build & deploy save-feedback
 
 on:
   push:
@@ -22,14 +22,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Enter directory
-        run: cd save-feedback
-
       - name: Install pip packages
         run: pip install -r requirements.txt
+        working-directory: ./save-feedback
 
       - name: Test code
         run: pytest
+        working-directory: ./save-feedback
 
   deploy:
     if: ${{ false }}
