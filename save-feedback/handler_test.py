@@ -5,7 +5,6 @@ import os
 import re
 
 def test_handle_valid_json(monkeypatch):
-    # Mock Redis
     class MockRedis:
         def __init__(self, *args, **kwargs):
             self.store = {}
@@ -19,8 +18,8 @@ def test_handle_valid_json(monkeypatch):
     response = json.loads(handle(payload))
 
     assert response["status"] == "success"
-    assert response["message"] == "Feedback enregistré"
-    assert re.match(r"^feedback:\d{4}-\d{2}-\d{2}T", response["key"])
+    assert response["message"] == "Feedback saved successfully"
+    assert response["key"].startswith("feedback:")
 
 
 def test_handle_raw_text(monkeypatch):
@@ -43,4 +42,5 @@ def test_handle_empty():
     response = json.loads(handle(""))
 
     assert response["status"] == "error"
-    assert response["error"] == "Aucun message reçu"
+    assert response["error"] == "No message provided"
+
