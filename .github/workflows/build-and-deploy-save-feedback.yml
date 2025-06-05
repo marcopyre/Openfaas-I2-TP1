@@ -22,8 +22,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+
       - name: debug
-        run: ls
+        run: ls -l && ls -l save-feedback
 
       - name: Install pip packages
         run: pip install -r requirements.txt
@@ -51,4 +53,4 @@ jobs:
         run: echo '${{ secrets.OPENFAAS_PASSWORD }}' | faas-cli login --username admin --password-stdin
 
       - name: Deploy function
-        run: faas-cli deploy -f save-feedback.yml
+        run: faas-cli deploy -f save-feedback.yaml

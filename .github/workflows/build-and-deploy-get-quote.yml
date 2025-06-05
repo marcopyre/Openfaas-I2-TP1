@@ -48,4 +48,4 @@ jobs:
         run: echo '${{ secrets.OPENFAAS_PASSWORD }}' | faas-cli login --username admin --password-stdin
 
       - name: Deploy function
-        run: faas-cli deploy -f get-quote.yml
+        run: faas-cli deploy -f get-quote.yaml
