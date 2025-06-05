@@ -22,24 +22,25 @@ jobs:
       - name: build save-feedback
         run: faas-cli build -f save-feedback.yaml
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
+  deploy:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-  #     - name: Setup faas-cli
-  #       run: curl -sL https://cli.openfaas.com | sudo sh
+      - name: Setup faas-cli
+        run: curl -sL https://cli.openfaas.com | sudo sh
 
-  #     - name: Set OpenFaaS Gateway
-  #       run: |
-  #         export OPENFAAS_URL=${{ secrets.OPENFAAS_URL }}
-  #         echo "OPENFAAS_URL=${{ secrets.OPENFAAS_URL }}" >> $GITHUB_ENV
+      - name: Set OpenFaaS Gateway
+        run: |
+          export OPENFAAS_URL=${{ secrets.OPENFAAS_URL }}
+          echo "OPENFAAS_URL=${{ secrets.OPENFAAS_URL }}" >> $GITHUB_ENV
 
-  #     - name: Login to OpenFaaS
-  #       run: echo '${{ secrets.OPENFAAS_PASSWORD }}' | faas-cli login --username admin --password-stdin
+      - name: Login to OpenFaaS
+        run: echo '${{ secrets.OPENFAAS_PASSWORD }}' | faas-cli login --username admin --password-stdin
 
-  #     - name: Deploy function
-  #       run: faas-cli deploy -f get-quote.yml
+      - name: Deploy function
+        run: faas-cli deploy -f get-quote.yml
 
-  #     - name: Deploy function
-  #       run: faas-cli deploy -f save-feedback.yml
+      - name: Deploy function
+        run: faas-cli deploy -f save-feedback.yml
