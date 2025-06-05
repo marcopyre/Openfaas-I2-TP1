@@ -1,0 +1,34 @@
+name: Deploy OpenFaaS Function
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup faas-cli
+        run: curl -sL https://cli.openfaas.com | sudo sh
+
+      - name: build get-quote
+        run: faas-cli build -f get-quote.yaml
+
+      - name: build save-feedback
+        run: faas-cli build -f save-feedback.yaml
+
+      - name: Set OpenFaaS Gateway
+        run: |
+          export OPENFAAS_URL=${{ secrets.OPENFAAS_URL }}
+          echo "OPENFAAS_URL=${{ secrets.OPENFAAS_URL }}" >> $GITHUB_ENV
+
+      - name: Login to OpenFaaS
+        run: echo '${{ secrets.OPENFAAS_PASSWORD }}' | faas-cli login --username admin --password-stdin
+
+      - name: Deploy function
+        run: faas-cli deploy -f get-quote.yml
+
+      - name: Deploy function
+        run: faas-cli deploy -f save-feedback.yml
