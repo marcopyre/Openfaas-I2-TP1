@@ -1,10 +1,46 @@
-from .handler import handle
+from handler import handle
+import json
+import redis
+import os
+import re
 
-# Test your handler here
+def test_handle_valid_json(monkeypatch):
+    # Mock Redis
+    class MockRedis:
+        def __init__(self, *args, **kwargs):
+            self.store = {}
 
-# To disable testing, you can set the build_arg `TEST_ENABLED=false` on the CLI or in your stack.yml
-# https://docs.openfaas.com/reference/yaml/#function-build-args-build-args
+        def set(self, key, value):
+            self.store[key] = value
 
-def test_handle():
-    # assert handle("input") == "input"
-    pass
+    monkeypatch.setattr(redis, "Redis", lambda *args, **kwargs: MockRedis())
+
+    payload = json.dumps({"message": "Super retour utilisateur"})
+    response = json.loads(handle(payload))
+
+    assert response["status"] == "success"
+    assert response["message"] == "Feedback enregistré"
+    assert re.match(r"^feedback:\d{4}-\d{2}-\d{2}T", response["key"])
+
+
+def test_handle_raw_text(monkeypatch):
+    class MockRedis:
+        def __init__(self, *args, **kwargs):
+            self.store = {}
+
+        def set(self, key, value):
+            self.store[key] = value
+
+    monkeypatch.setattr(redis, "Redis", lambda *args, **kwargs: MockRedis())
+
+    response = json.loads(handle("Juste un texte brut"))
+
+    assert response["status"] == "success"
+    assert "key" in response
+
+
+def test_handle_empty():
+    response = json.loads(handle(""))
+
+    assert response["status"] == "error"
+    assert response["error"] == "Aucun message reçu"

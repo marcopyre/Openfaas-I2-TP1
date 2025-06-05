@@ -1,0 +1,52 @@
+name: Deploy OpenFaaS Function
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup faas-cli
+        run: curl -sL https://cli.openfaas.com | sudo sh
+
+      - name: Pull python3-http template
+        run: faas-cli template store pull python3-http
+
+      - name: build get-quote
+        run: faas-cli build -f get-quote.yaml
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enter directory
+        run: cd get-quote
+
+      - name: Install pip packages
+        run: pip install -r requirements.txt
+
+      - name: Test code
+        run: pytest
+
+  deploy:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup faas-cli
+        run: curl -sL https://cli.openfaas.com | sudo sh
+
+      - name: Set OpenFaaS Gateway
+        run: |
+          export OPENFAAS_URL=${{ secrets.OPENFAAS_URL }}
+          echo "OPENFAAS_URL=${{ secrets.OPENFAAS_URL }}" >> $GITHUB_ENV
+
+      - name: Login to OpenFaaS
+        run: echo '${{ secrets.OPENFAAS_PASSWORD }}' | faas-cli login --username admin --password-stdin
+
+      - name: Deploy function
+        run: faas-cli deploy -f get-quote.yml
